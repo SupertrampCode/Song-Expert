@@ -7,7 +7,7 @@ import java.util.List;
 public interface BaseDao<K extends Serializable, E> {
     E save(E entity);
 
-    void delete(K id);
+    void delete(E entity);
 
     void clear();
 
@@ -15,7 +15,6 @@ public interface BaseDao<K extends Serializable, E> {
 
     E findById(K id);
 
-    List<E> findAll();
-
+    List<E> getAll();
 
 }

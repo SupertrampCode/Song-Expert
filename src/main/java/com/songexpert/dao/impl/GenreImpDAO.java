@@ -10,4 +10,5 @@ public class GenreImpDAO extends BasicImplDao<Long, Genre> implements GenreDao {
         super();
     }
 
+
 }

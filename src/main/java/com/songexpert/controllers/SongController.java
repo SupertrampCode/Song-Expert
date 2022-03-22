@@ -3,19 +3,15 @@ package com.songexpert.controllers;
 
 import com.songexpert.dto.SongDTO;
 import com.songexpert.mappers.SongMapper;
-import com.songexpert.model.Band;
-import com.songexpert.model.Genre;
-import com.songexpert.model.Song;
 import com.songexpert.services.SongService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/song")
+@RequestMapping("/songs")
 public class SongController {
 
     private final SongService songService;
@@ -28,34 +24,38 @@ public class SongController {
     }
 
     @GetMapping
+    public ResponseEntity<List<SongDTO>> getAll() {
+        return new ResponseEntity<>(songMapper.toDtoList(songService.getAll()),HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public SongDTO get(@PathVariable("id") Long id) {
+        return songMapper.toDto(songService.getSong(id));
+    }
+
+    @GetMapping("name-search")
     public ResponseEntity<List<SongDTO>> getByName(@RequestParam("name") String name) {
-        return new ResponseEntity<>(songService.findByName(name).stream().map(songMapper::toDto).collect(Collectors.toList()),
-                HttpStatus.OK);
-    }
-    @GetMapping
-    public ResponseEntity<List<SongDTO>> getByBand (@RequestParam("band-name")String bandName) {
-        return new ResponseEntity<>(songService.songsByBand(bandName).stream().map(songMapper::toDto).collect(Collectors.toList())
-        ,HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SongDTO>> getByGenre (@RequestParam Genre genre) {
-        return new ResponseEntity<>(songService.songsByGenre(genre).stream().map(songMapper::toDto).collect(Collectors.toList()),
+        return new ResponseEntity<>(songMapper.toDtoList(songService.findByName(name)),
                 HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<SongDTO> getById(@RequestParam("id") Long id){
-        return new ResponseEntity<>(songService.)
+    @GetMapping("band-search")
+    public ResponseEntity<List<SongDTO>> getByBand(@RequestParam("band-name") String bandName) {
+        return new ResponseEntity<>(songMapper.toDtoList(songService.songsByBand(bandName)),
+                HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<SongDTO> saveSong (@RequestParam SongDTO songDTO){
-        return new ResponseEntity<SongDTO>(songMapper.toDto(songService.saveSong(songMapper.toEntity(songDTO))),HttpStatus.CREATED);
+    @GetMapping("genre-search")
+    public ResponseEntity<List<SongDTO>> getByGenre(@RequestParam("genre-name") String genreName) {
+        return new ResponseEntity<>(songMapper.toDtoList(songService.songsByGenre(genreName)),
+                HttpStatus.OK);
     }
 
 
-
-
+    @PostMapping("save")
+    public ResponseEntity<SongDTO> saveSong(@RequestParam SongDTO songDTO) {
+        return new ResponseEntity<>(songMapper.toDto(songService.saveSong(songMapper.toEntity(songDTO))),
+                HttpStatus.CREATED);
+    }
 
 }
