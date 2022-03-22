@@ -36,10 +36,9 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
 
 
     @Override
-    public void delete(K id) {
-        Session session = sessionFactory.openSession();
-        session.delete(id);
-        session.close();
+    public void delete(E entity) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(entity);
     }
 
     @Override
@@ -52,9 +51,8 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
 
     @Override
     public void update(E entity) {
-        Session session = sessionFactory.openSession();
+        Session session = sessionFactory.getCurrentSession();
         session.update(entity);
-        session.close();
     }
 
     @Override
@@ -66,14 +64,9 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
         return entity;
     }
 
-    @Override
-    public List<E> findAll() {
-        Session session = sessionFactory.openSession();
-        session.setReadOnly(baseClass, true);
-        var query = session.getCriteriaBuilder().createQuery(baseClass);
-        query.from(baseClass);
-        List<E> result = session.createQuery(query).getResultList();
-        session.close();
-        return result;
+    public List<E> getAll() {
+        return sessionFactory.getCurrentSession()
+                .createQuery("FROM " + baseClass.getName(), baseClass)
+                .getResultList();
     }
 }

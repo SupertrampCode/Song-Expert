@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @FieldDefaults(level= AccessLevel.PRIVATE)
 public class BandDTO {
+    Long id;
     String name;
     LocalDate creatingDate;
     List<MusicianDTO> musicians;

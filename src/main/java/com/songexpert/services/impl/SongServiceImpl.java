@@ -1,15 +1,13 @@
 package com.songexpert.services.impl;
 
 import com.songexpert.dao.SongDao;
-import com.songexpert.model.Band;
-import com.songexpert.model.Genre;
 import com.songexpert.model.Song;
+import com.songexpert.services.SongService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.songexpert.services.SongService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,45 +17,62 @@ import java.util.List;
 public class SongServiceImpl implements SongService {
 
     private final SongDao songDao;
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public SongServiceImpl(SongDao songDao, SessionFactory sessionFactory) {
         this.songDao = songDao;
-        this.sessionFactory=sessionFactory;
+        this.sessionFactory = sessionFactory;
     }
 
     public Song saveSong(Song song) {
         return songDao.save(song);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteSong(Song song) {
-        songDao.delete(song.getId());
+        songDao.delete(song);
     }
 
-    @Transactional(readOnly=true)
-    public Song getSong(Song song) {
-        return songDao.findById(song.getId());
+    @Transactional(readOnly = true)
+    public Song getSong(Long id) {
+        return songDao.findById(id);
     }
 
-    public void updateInfo(Song song) {
+    @Override
+    public List<Song> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Song ", Song.class).getResultList();
+        }
+    }
+
+    @Override
+    public void update(Song song) {
         songDao.update(song);
     }
 
-    public List<Song> songsByGenre(Genre genre) {
-        return songDao.getAllByGenre(genre);
+    public List<Song> songsByGenre(String genreName) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Song WHERE genre.name like:name", Song.class)
+                    .setParameter("name", "%" + genreName + "%")
+                    .getResultList();
+        }
     }
 
     @Override
     public List<Song> findByName(String name) {
-        return sessionFactory.openSession().createQuery("FROM Song WHERE name=:name",Song.class).getResultList();
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Song WHERE name=:name", Song.class).getResultList();
+        }
+
     }
 
     @Override
     public List<Song> songsByBand(String bandName) {
-        return sessionFactory.openSession()
-                .createQuery("FROM Song WHERE band.name like:name",Song.class)
-                .setParameter("name",bandName)
-                .getResultList();
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Song WHERE band.name like:name", Song.class)
+                    .setParameter("name", "%" + bandName + "%")
+                    .getResultList();
+        }
     }
 }

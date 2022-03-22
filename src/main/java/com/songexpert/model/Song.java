@@ -1,17 +1,13 @@
 package com.songexpert.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Objects;
-
-
-/**
- * Duration in secs.
- */
+import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "songs")
@@ -40,17 +36,15 @@ public class Song {
     @Column(name = "link")
     private String link;
 
+    @Column(name = "info", columnDefinition = "TEXT")
+    private String info;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Song song = (Song) o;
-        return id != null && Objects.equals(id, song.id);
-    }
+    @Column(name = "created")
+    private LocalDate created;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "uploaded")
+    private Date updated;
+
 }
