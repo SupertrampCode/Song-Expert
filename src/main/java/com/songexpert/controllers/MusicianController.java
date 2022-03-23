@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/musician")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MusicianController {
 
     private final MusicianMapper musicianMapper;
