@@ -1,19 +1,19 @@
 package com.songexpert.services;
 
 
-import com.songexpert.model.Musician;
+import com.songexpert.dto.MusicianDTO;
 
 import java.util.List;
 
 public interface MusicianService {
 
-    Musician save(Musician musician);
+    MusicianDTO save(MusicianDTO musicianDTO);
 
-    void delete(Musician musician);
+    void delete(Long id);
 
-    Musician getById(Long id);
+    MusicianDTO findById(Long id);
 
-    void update(Musician musician);
+    void update(MusicianDTO musicianDTO);
 
-    List<Musician> getAll();
+    List<MusicianDTO> getAll();
 }

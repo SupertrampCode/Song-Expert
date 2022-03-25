@@ -1,11 +1,15 @@
 package com.songexpert.services.impl;
 
 import com.songexpert.dao.BandDao;
+import com.songexpert.dto.BandDTO;
+import com.songexpert.mappers.BandMapper;
 import com.songexpert.model.Band;
 import com.songexpert.services.BandService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -13,33 +17,38 @@ import java.util.List;
 public class BandServiceImpl implements BandService {
 
     private final BandDao bandDao;
+    private final BandMapper bandMapper;
 
-    public BandServiceImpl(BandDao bandDao) {
+    @Autowired
+    public BandServiceImpl(BandDao bandDao, BandMapper bandMapper) {
         this.bandDao = bandDao;
+        this.bandMapper = bandMapper;
     }
 
     @Override
-    public Band save(Band band) {
-        return bandDao.save(band);
+    public BandDTO save(BandDTO bandDTO) {
+        return bandMapper.toDto(bandDao.save(bandMapper.toEntity(bandDTO)));
     }
 
     @Override
-    public void delete(Band band) {
-    bandDao.delete(band);
+    public void delete(Long id) {
+    bandDao.delete(bandDao.findById(id));
     }
 
     @Override
-    public Band getById(Long id) {
-        return bandDao.findById(id);
+    @Transactional(readOnly = true,propagation = Propagation.REQUIRES_NEW)
+    public BandDTO findById(Long id) {
+        return bandMapper.toDto(bandDao.findById(id));
     }
 
     @Override
-    public void update(Band band) {
-        bandDao.update(band);
+    public void update(BandDTO bandDTO) {
+        bandDao.update(bandMapper.toEntity(bandDTO));
     }
 
     @Override
-    public List<Band> getAll() {
-        return bandDao.getAll();
+    @Transactional(readOnly = true,propagation = Propagation.REQUIRES_NEW)
+    public List<BandDTO> getAll() {
+        return bandMapper.toDtoList(bandDao.getAll());
     }
 }

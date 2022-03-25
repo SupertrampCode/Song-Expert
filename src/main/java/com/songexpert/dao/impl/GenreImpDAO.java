@@ -2,6 +2,7 @@ package com.songexpert.dao.impl;
 
 import com.songexpert.dao.GenreDao;
 import com.songexpert.model.Genre;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -10,5 +11,11 @@ public class GenreImpDAO extends BasicImplDao<Long, Genre> implements GenreDao {
         super();
     }
 
+    public boolean isExist (Genre genre){
+        try (Session session = sessionFactory.openSession()){
+            return (int) session.createQuery("select count (*) FROM Genre WHERE name=:name")
+                    .setParameter("name",genre.getName()).getSingleResult()!=0;
+        }
+    }
 
 }

@@ -3,8 +3,8 @@ package com.songexpert.controllers;
 
 import com.songexpert.dto.BandDTO;
 import com.songexpert.exceptions.ElementAlreadyExistException;
-import com.songexpert.mappers.BandMapper;
 import com.songexpert.services.BandService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,31 +17,27 @@ import java.util.List;
 public class BandController {
 
     private final BandService bandService;
-    private final BandMapper bandMapper;
 
-    public BandController(BandService bandService, BandMapper bandMapper) {
+    @Autowired
+    public BandController(BandService bandService) {
         this.bandService = bandService;
-        this.bandMapper = bandMapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BandDTO> getById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(bandMapper.toDto(bandService.getById(id)), HttpStatus.OK);
+        return new ResponseEntity<>(bandService.findById(id), HttpStatus.OK);
     }
 
-
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<BandDTO>> getAll() {
-        return new ResponseEntity<>(bandMapper
-                .toDtoList(bandService.getAll()),
+        return new ResponseEntity<>(bandService.getAll(),
                 HttpStatus.OK);
     }
 
     //TODO throw exception ElementAlreadyExist
     @PostMapping
     public ResponseEntity<BandDTO> create(@RequestBody BandDTO bandDTO) throws ElementAlreadyExistException {
-        return new ResponseEntity<>(bandMapper
-                .toDto(bandService.save(bandMapper.toEntity(bandDTO))), HttpStatus.OK);
+        return new ResponseEntity<>(bandService.save(bandDTO), HttpStatus.OK);
 
     }
 
@@ -50,12 +46,12 @@ public class BandController {
         if (!id.equals(bandDTO.getId())) {
             throw new IllegalArgumentException("ID's don't match");
         }
-        bandService.update(bandMapper.toEntity(bandDTO));
+        bandService.update(bandDTO);
     }
 
     @DeleteMapping("/{id}")
     public HttpStatus delete(@PathVariable("id") Long id) {
-        bandService.delete(bandService.getById(id));
+        bandService.delete(id);
         return HttpStatus.OK;
     }
 

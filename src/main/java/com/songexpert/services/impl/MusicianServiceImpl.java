@@ -1,10 +1,13 @@
 package com.songexpert.services.impl;
 
 import com.songexpert.dao.MusicianDao;
+import com.songexpert.dto.MusicianDTO;
+import com.songexpert.mappers.MusicianMapper;
 import com.songexpert.model.Musician;
 import com.songexpert.services.MusicianService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -14,34 +17,38 @@ import java.util.List;
 public class MusicianServiceImpl implements MusicianService {
 
     private final MusicianDao musicianDao;
+    private final MusicianMapper musicianMapper;
 
     @Autowired
-    public MusicianServiceImpl(MusicianDao musicianDao) {
+    public MusicianServiceImpl(MusicianDao musicianDao, MusicianMapper musicianMapper) {
         this.musicianDao = musicianDao;
+        this.musicianMapper = musicianMapper;
     }
 
     @Override
-    public Musician save(Musician musician) {
-        return musicianDao.save(musician);
+    public MusicianDTO save(MusicianDTO musicianDTO) {
+        return musicianMapper.toDto(musicianDao.save(musicianMapper.toEntity(musicianDTO)));
     }
 
     @Override
-    public void delete(Musician musician) {
-        musicianDao.save(musician);
+    public void delete(Long id) {
+        musicianDao.delete(musicianDao.findById(id));
     }
 
     @Override
-    public Musician getById(Long id) {
-        return musicianDao.findById(id);
+    @Transactional(readOnly = true)
+    public MusicianDTO findById(Long id) {
+        return musicianMapper.toDto(musicianDao.findById(id));
     }
 
     @Override
-    public void update(Musician musician) {
-        musicianDao.update(musician);
+    public void update(MusicianDTO musicianDTO) {
+        musicianDao.update(musicianMapper.toEntity(musicianDTO));
     }
 
     @Override
-    public List<Musician> getAll() {
-        return musicianDao.getAll();
+    @Transactional(readOnly = true)
+    public List<MusicianDTO> getAll() {
+        return musicianMapper.toDtoList(musicianDao.getAll());
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class AplicationExceptionHandler {
+public class ApplicationExceptionHandler {
 
         @ExceptionHandler(ElementAlreadyExistException.class)
         @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)

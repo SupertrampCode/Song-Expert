@@ -1,6 +1,8 @@
 package com.songexpert.services.impl;
 
 import com.songexpert.dao.SongDao;
+import com.songexpert.dto.SongDTO;
+import com.songexpert.mappers.SongMapper;
 import com.songexpert.model.Song;
 import com.songexpert.services.SongService;
 import org.hibernate.Session;
@@ -18,61 +20,66 @@ public class SongServiceImpl implements SongService {
 
     private final SongDao songDao;
     private final SessionFactory sessionFactory;
+    private final SongMapper songMapper;
 
     @Autowired
-    public SongServiceImpl(SongDao songDao, SessionFactory sessionFactory) {
+    public SongServiceImpl(SongDao songDao, SessionFactory sessionFactory, SongMapper songMapper) {
         this.songDao = songDao;
         this.sessionFactory = sessionFactory;
+        this.songMapper = songMapper;
     }
 
-    public Song saveSong(Song song) {
-        return songDao.save(song);
+    public SongDTO saveSong(SongDTO songDTO) {
+        return songMapper.toDto(songDao.save(songMapper.toEntity(songDTO)));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deleteSong(Song song) {
-        songDao.delete(song);
+    public void delete(Long id) {
+        songDao.delete(songDao.findById(id));
     }
 
     @Transactional(readOnly = true)
-    public Song getSong(Long id) {
-        return songDao.findById(id);
+    public SongDTO findById(Long id) {
+        return songMapper.toDto(songDao.findById(id));
     }
 
     @Override
-    public List<Song> getAll() {
+    @Transactional(readOnly = true)
+    public List<SongDTO> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Song ", Song.class).getResultList();
+            return songMapper.toDtoList(session.createQuery("FROM Song ", Song.class).getResultList());
         }
     }
 
     @Override
-    public void update(Song song) {
-        songDao.update(song);
+    public void update(SongDTO songDTO) {
+        songDao.update(songMapper.toEntity(songDTO));
     }
 
-    public List<Song> songsByGenre(String genreName) {
+    @Override
+    @Transactional(readOnly = true,propagation = Propagation.REQUIRES_NEW)
+    public List<SongDTO> songsByGenre(String genreName) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Song WHERE genre.name like:name", Song.class)
+            return songMapper.toDtoList(session.createQuery("FROM Song WHERE genre.name like:name", Song.class)
                     .setParameter("name", "%" + genreName + "%")
-                    .getResultList();
+                    .getResultList());
         }
     }
 
     @Override
-    public List<Song> findByName(String name) {
+    @Transactional(readOnly = true)
+    public List<SongDTO> findByName(String name) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Song WHERE name=:name", Song.class).getResultList();
+            return songMapper.toDtoList(session.createQuery("FROM Song WHERE name=:name", Song.class).getResultList());
         }
-
     }
 
     @Override
-    public List<Song> songsByBand(String bandName) {
+    @Transactional(readOnly = true)
+    public List<SongDTO> songsByBand(String bandName) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Song WHERE band.name like:name", Song.class)
+            return songMapper.toDtoList(session.createQuery("FROM Song WHERE band.name like:name", Song.class)
                     .setParameter("name", "%" + bandName + "%")
-                    .getResultList();
+                    .getResultList());
         }
     }
 }

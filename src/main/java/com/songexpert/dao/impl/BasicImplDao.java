@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaDelete;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 @Slf4j
+@Transactional
 public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao<K, E> {
 
     protected final Class<E> baseClass;
@@ -56,6 +58,7 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
     }
 
     @Override
+    @Transactional(readOnly = true)
     public E findById(K id) {
         Session session = sessionFactory.openSession();
         E entity = session.get(baseClass, id);
@@ -64,6 +67,7 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
         return entity;
     }
 
+    @Transactional(readOnly = true)
     public List<E> getAll() {
         return sessionFactory.getCurrentSession()
                 .createQuery("FROM " + baseClass.getName(), baseClass)

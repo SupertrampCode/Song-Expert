@@ -1,19 +1,19 @@
 package com.songexpert.services;
 
 
-import com.songexpert.model.Band;
+import com.songexpert.dto.BandDTO;
 
 import java.util.List;
 
 public interface BandService {
 
-    Band save(Band band);
+    BandDTO save(BandDTO bandDTO);
 
-    void delete(Band band);
+    void delete(Long id);
 
-    Band getById(Long id);
+    BandDTO findById(Long id);
 
-    void update(Band band);
+    void update(BandDTO bandDTO);
 
-    List<Band> getAll();
+    List<BandDTO> getAll();
 }
