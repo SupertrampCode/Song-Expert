@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/musicians")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MusicianController {
 
     private final MusicianService musicianService;
@@ -33,19 +32,15 @@ public class MusicianController {
                 HttpStatus.OK);
     }
 
-    //TODO throw exception ElementAlreadyExist
     @PostMapping
     public ResponseEntity<MusicianDTO> create(@RequestBody MusicianDTO musicianDTO) {
         return new ResponseEntity<>(musicianService.save(musicianDTO),
                 HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody MusicianDTO musicianDTO) {
-        if (!id.equals(musicianDTO.getId())) {
-            throw new IllegalArgumentException("ID's don't match");
-        }
-        musicianService.update(musicianDTO);
+    @PutMapping
+    public ResponseEntity<MusicianDTO> update(@RequestBody MusicianDTO musicianDTO) {
+        return new ResponseEntity<>(musicianService.update(musicianDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

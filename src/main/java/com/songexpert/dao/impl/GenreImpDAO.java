@@ -11,10 +11,10 @@ public class GenreImpDAO extends BasicImplDao<Long, Genre> implements GenreDao {
         super();
     }
 
-    public boolean isExist (Genre genre){
-        try (Session session = sessionFactory.openSession()){
-            return (int) session.createQuery("select count (*) FROM Genre WHERE name=:name")
-                    .setParameter("name",genre.getName()).getSingleResult()!=0;
+    public boolean isExist(Genre genre) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("select count (*) FROM Genre WHERE name=:name", Long.class)
+                    .setParameter("name", genre.getName()).getSingleResult() > 0;
         }
     }
 

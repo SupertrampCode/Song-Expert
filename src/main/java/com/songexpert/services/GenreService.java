@@ -13,7 +13,7 @@ public interface GenreService {
 
     GenreDTO findById(Long id);
 
-    void update(GenreDTO genreDTO);
+    GenreDTO update(GenreDTO genreDTO);
 
     List<GenreDTO> getAll();
 

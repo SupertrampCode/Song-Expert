@@ -13,7 +13,7 @@ public interface MusicianService {
 
     MusicianDTO findById(Long id);
 
-    void update(MusicianDTO musicianDTO);
+    MusicianDTO update(MusicianDTO musicianDTO);
 
     List<MusicianDTO> getAll();
 }

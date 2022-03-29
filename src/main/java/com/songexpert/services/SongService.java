@@ -14,7 +14,7 @@ public interface SongService {
 
     List<SongDTO> getAll();
 
-    void update(SongDTO songDTO);
+    SongDTO update(SongDTO songDTO);
 
     List<SongDTO> findByName(String name);
 
@@ -22,5 +22,6 @@ public interface SongService {
 
     List<SongDTO> songsByGenre(String genreName);
 
+    List<SongDTO> getNewest();
 
 }

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
-        @ExceptionHandler(ElementAlreadyExistException.class)
-        @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-        public ResponseEntity<String> entityNotFoundExceptionHandler(ElementAlreadyExistException exception) {
+    @ExceptionHandler(ElementAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity<String> entityNotFoundExceptionHandler(ElementAlreadyExistException exception) {
         return getStatusAndModel(HttpStatus.NOT_ACCEPTABLE, exception);
-        }
+    }
 
-        private ResponseEntity<String> getStatusAndModel(HttpStatus httpStatus, Exception exception) {
+    private ResponseEntity<String> getStatusAndModel(HttpStatus httpStatus, Exception exception) {
         return new ResponseEntity<>(exception.getMessage(), httpStatus);
     }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bands")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BandController {
 
     private final BandService bandService;
@@ -34,19 +33,15 @@ public class BandController {
                 HttpStatus.OK);
     }
 
-    //TODO throw exception ElementAlreadyExist
     @PostMapping
     public ResponseEntity<BandDTO> create(@RequestBody BandDTO bandDTO) throws ElementAlreadyExistException {
         return new ResponseEntity<>(bandService.save(bandDTO), HttpStatus.OK);
 
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody BandDTO bandDTO) {
-        if (!id.equals(bandDTO.getId())) {
-            throw new IllegalArgumentException("ID's don't match");
-        }
-        bandService.update(bandDTO);
+    @PutMapping
+    public ResponseEntity<BandDTO> update(@RequestBody BandDTO bandDTO) {
+        return new ResponseEntity<>(bandService.update(bandDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

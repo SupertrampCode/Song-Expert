@@ -2,12 +2,13 @@ package com.songexpert.services.impl;
 
 import com.songexpert.dao.MusicianDao;
 import com.songexpert.dto.MusicianDTO;
+import com.songexpert.exceptions.ElementAlreadyExistException;
+import com.songexpert.exceptions.ElementNotExist;
 import com.songexpert.mappers.MusicianMapper;
 import com.songexpert.model.Musician;
 import com.songexpert.services.MusicianService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,12 +28,20 @@ public class MusicianServiceImpl implements MusicianService {
 
     @Override
     public MusicianDTO save(MusicianDTO musicianDTO) {
-        return musicianMapper.toDto(musicianDao.save(musicianMapper.toEntity(musicianDTO)));
+        Musician musician = musicianMapper.toEntity(musicianDTO);
+        if (musicianDao.isExist(musician)) {
+            throw new ElementAlreadyExistException("Musician: " + musician.getFirstName() + " " + musician.getLastName() + " is already exist!");
+        }
+        return musicianMapper.toDto(musicianDao.save(musician));
     }
 
     @Override
     public void delete(Long id) {
-        musicianDao.delete(musicianDao.findById(id));
+        Musician musician = musicianDao.findById(id);
+        if (musician == null) {
+            throw new ElementNotExist("This musician doesn't exist.");
+        }
+        musicianDao.delete(musician);
     }
 
     @Override
@@ -42,8 +51,8 @@ public class MusicianServiceImpl implements MusicianService {
     }
 
     @Override
-    public void update(MusicianDTO musicianDTO) {
-        musicianDao.update(musicianMapper.toEntity(musicianDTO));
+    public MusicianDTO update(MusicianDTO musicianDTO) {
+        return musicianMapper.toDto(musicianDao.update(musicianMapper.toEntity(musicianDTO)));
     }
 
     @Override

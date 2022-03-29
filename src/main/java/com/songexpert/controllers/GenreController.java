@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/genres")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GenreController {
 
     private final GenreService genreService;
@@ -31,18 +30,14 @@ public class GenreController {
         return new ResponseEntity<>(genreService.getAll(), HttpStatus.OK);
     }
 
-    //TODO throw exception ElementAlreadyExist
     @PostMapping
     public ResponseEntity<GenreDTO> create(@RequestBody GenreDTO genreDTO) {
         return new ResponseEntity<>(genreService.save(genreDTO), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody GenreDTO genreDTO) {
-        if (!id.equals(genreDTO.getId())) {
-            throw new IllegalArgumentException("ID's don't match");
-        }
-        genreService.update(genreDTO);
+    @PutMapping
+    public ResponseEntity<GenreDTO> update(@RequestBody GenreDTO genreDTO) {
+        return new ResponseEntity<>(genreService.update(genreDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

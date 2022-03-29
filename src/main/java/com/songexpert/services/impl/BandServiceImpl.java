@@ -2,12 +2,13 @@ package com.songexpert.services.impl;
 
 import com.songexpert.dao.BandDao;
 import com.songexpert.dto.BandDTO;
+import com.songexpert.exceptions.ElementAlreadyExistException;
+import com.songexpert.exceptions.ElementNotExist;
 import com.songexpert.mappers.BandMapper;
 import com.songexpert.model.Band;
 import com.songexpert.services.BandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,27 +28,35 @@ public class BandServiceImpl implements BandService {
 
     @Override
     public BandDTO save(BandDTO bandDTO) {
-        return bandMapper.toDto(bandDao.save(bandMapper.toEntity(bandDTO)));
+        Band band = bandMapper.toEntity(bandDTO);
+        if (bandDao.isExist(band)) {
+            throw new ElementAlreadyExistException("Band:" + band.getName() + " is already exist!");
+        }
+        return bandMapper.toDto(bandDao.save(band));
     }
 
     @Override
     public void delete(Long id) {
-    bandDao.delete(bandDao.findById(id));
+        Band band = bandDao.findById(id);
+        if (band==null) {
+            throw new ElementNotExist("This band doesn't exist");
+        }
+        bandDao.delete(band);
     }
 
     @Override
-    @Transactional(readOnly = true,propagation = Propagation.REQUIRES_NEW)
+    @Transactional(readOnly = true)
     public BandDTO findById(Long id) {
         return bandMapper.toDto(bandDao.findById(id));
     }
 
     @Override
-    public void update(BandDTO bandDTO) {
-        bandDao.update(bandMapper.toEntity(bandDTO));
+    public BandDTO update(BandDTO bandDTO) {
+        return bandMapper.toDto(bandDao.update(bandMapper.toEntity(bandDTO)));
     }
 
     @Override
-    @Transactional(readOnly = true,propagation = Propagation.REQUIRES_NEW)
+    @Transactional(readOnly = true)
     public List<BandDTO> getAll() {
         return bandMapper.toDtoList(bandDao.getAll());
     }

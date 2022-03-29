@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaDelete;
@@ -52,13 +53,14 @@ public abstract class BasicImplDao<K extends Serializable, E> implements BaseDao
     }
 
     @Override
-    public void update(E entity) {
+    public E update(E entity) {
         Session session = sessionFactory.getCurrentSession();
         session.update(entity);
+        return entity;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public E findById(K id) {
         Session session = sessionFactory.openSession();
         E entity = session.get(baseClass, id);

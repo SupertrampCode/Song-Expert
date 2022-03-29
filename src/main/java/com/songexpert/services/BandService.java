@@ -13,7 +13,7 @@ public interface BandService {
 
     BandDTO findById(Long id);
 
-    void update(BandDTO bandDTO);
+    BandDTO update(BandDTO bandDTO);
 
     List<BandDTO> getAll();
 }
