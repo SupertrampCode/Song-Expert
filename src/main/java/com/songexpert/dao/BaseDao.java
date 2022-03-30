@@ -11,10 +11,12 @@ public interface BaseDao<K extends Serializable, E> {
 
     void clear();
 
-    void update(E entity);
+    E update(E entity);
 
     E findById(K id);
 
     List<E> getAll();
+
+    boolean isExist(E entity);
 
 }

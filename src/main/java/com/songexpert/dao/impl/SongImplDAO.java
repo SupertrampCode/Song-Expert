@@ -5,9 +5,7 @@ import com.songexpert.model.Band;
 import com.songexpert.model.Genre;
 import com.songexpert.model.Song;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,16 +14,9 @@ import java.util.List;
 @Repository
 public class SongImplDAO extends BasicImplDao<Long, Song> implements SongDao {
 
-    SessionFactory sessionFactory;
-
-    @Autowired
-    public SongImplDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     public List<Song> getAllByBand(@NotNull Band band) {
         Session session = sessionFactory.openSession();
-        List<Song> songs = session.createQuery("FROM Song WHERE band.id=:band", Song.class)
+        List<Song> songs = session.createQuery("select count (*) FROM Song WHERE band.id=:band", Song.class)
                 .setParameter("band", band.getId())
                 .getResultList();
         session.close();
@@ -42,4 +33,14 @@ public class SongImplDAO extends BasicImplDao<Long, Song> implements SongDao {
         return songs;
     }
 
+    @Override
+    public boolean isExist(Song song) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Song WHERE name=:name and genre.id=:genreID and band.id=:bandID", Long.class)
+                    .setParameter("name", song.getName())
+                    .setParameter("genreID", song.getGenre().getId())
+                    .setParameter("bandID", song.getBand().getId())
+                    .getSingleResult() > 0;
+        }
+    }
 }

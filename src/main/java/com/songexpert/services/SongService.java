@@ -1,26 +1,27 @@
 package com.songexpert.services;
 
-import com.songexpert.model.Song;
+import com.songexpert.dto.SongDTO;
 
 import java.util.List;
 
 public interface SongService {
 
-    Song saveSong(Song song);
+    SongDTO saveSong(SongDTO songDTO);
 
-    void deleteSong(Song song);
+    void delete(Long id);
 
-    Song getSong(Long id);
+    SongDTO findById(Long id);
 
-    List<Song> getAll();
+    List<SongDTO> getAll();
 
-    void update(Song song);
+    SongDTO update(SongDTO songDTO);
 
-    List<Song> findByName(String name);
+    List<SongDTO> findByName(String name);
 
-    List<Song> songsByBand(String bandName);
+    List<SongDTO> songsByBand(String bandName);
 
-    List<Song> songsByGenre(String genreName);
+    List<SongDTO> songsByGenre(String genreName);
 
+    List<SongDTO> getNewest();
 
 }

@@ -1,22 +1,20 @@
 package com.songexpert.services;
 
-import com.songexpert.model.Genre;
+import com.songexpert.dto.GenreDTO;
 
 import java.util.List;
 
 
 public interface GenreService {
 
-    Genre save(Genre genre);
+    GenreDTO save(GenreDTO genreDTO);
 
-    void delete(Genre genre);
+    void delete(Long id);
 
-    Genre getById(Long id);
+    GenreDTO findById(Long id);
 
-    void update(Genre genre);
+    GenreDTO update(GenreDTO genreDTO);
 
-    List<Genre> getAll ();
-
-    boolean checkIdentity (Genre genre);
+    List<GenreDTO> getAll();
 
 }
